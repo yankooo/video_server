@@ -25,7 +25,7 @@ func AddUserCredential(loginName, pwd string) error {
 }
 
 func GetUserCredential(loginName string) (string, error) {
-	stmtOut, err := dbConn.Prepare("SELECT pwd FROM user WHERE login_name = ?")
+	stmtOut, err := dbConn.Prepare("SELECT pwd FROM users WHERE login_name = ?")
 	if err != nil {
 		log.Println("select user prepare fail")
 	}
