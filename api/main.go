@@ -20,9 +20,9 @@ import (
 func RegisterHandlers() *httprouter.Router {
 	router := httprouter.New()
 
-	router.POST("/user", CreateUser)
+	router.POST("/user", SignedUp) // SignedUp
 
-	router.POST("/user/:user_name", Login)
+	router.POST("/user/:user_name", SignedIn) // SignedIn
 
 	return router
 }

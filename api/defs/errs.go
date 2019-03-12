@@ -19,4 +19,6 @@ type ErrorResponse struct {
 var (
 	ErrorRequestBodyParseFailed = ErrorResponse{HttpSC: 400, Error: Err{Error: "Request body is not correct.", ErrorCode: "001"}} // 不能解析这个请求
 	ErrorNotAuthUser            = ErrorResponse{HttpSC: 401, Error: Err{Error: "User authentication failed.", ErrorCode: "002"}}  // 用户不合法，不存在
+	ErrorDBError                = ErrorResponse{HttpSC: 500, Error: Err{Error: "DB ops failed", ErrorCode: "003"}}                // 数据库操作错误
+	ErrorInternalFaults         = ErrorResponse{HttpSC: 500, Error: Err{Error: "Internal service error", ErrorCode: "004"}}
 )

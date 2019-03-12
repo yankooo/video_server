@@ -11,6 +11,17 @@ type UserCredential struct {
 	Pwd      string `json:"pwd"`
 }
 
+// response
+type SignedUp struct {
+	Success   bool   `json:"success"`
+	SessionId string `json:"session_id"`
+}
+
+type SignedIn struct {
+	Success   bool   `json:"success"`
+	SessionId string `json:"session_id"`
+}
+
 // Data modal
 type User struct {
 	Id        int
@@ -30,4 +41,9 @@ type Comment struct {
 	AideoId string `json:"aideo_id"`
 	Author  string `json:"author"`
 	Content string `json:"content"`
+}
+
+type SimpleSession struct {
+	Username string // login name
+	TTL      int64
 }
