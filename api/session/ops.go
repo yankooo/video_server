@@ -2,7 +2,7 @@
 * @Author: yanKoo
 * @Date: 2019/3/12 15:38
 * @Description: 选择sync包下的map来做缓存
-*/
+ */
 package session
 
 import (
@@ -21,7 +21,7 @@ func init() {
 }
 
 func nowInMilli() int64 {
-	return time.Now().UnixNano()/1000000	// 纳秒/10 00000
+	return time.Now().UnixNano() / 1000000 // 纳秒/10 00000
 }
 
 func deleteExpiredSession(sid string) {
@@ -33,7 +33,7 @@ func deleteExpiredSession(sid string) {
 }
 
 // 从数据库中加载session，放进内存中的map
-func LoadSessionFromDB(){
+func LoadSessionFromDB() {
 	r, err := dbops.RetrieveAllSessions()
 	if err != nil {
 		return
@@ -49,9 +49,9 @@ func LoadSessionFromDB(){
 func GenerateNewSessionId(un string) string {
 	sid, _ := utils.NewUUID()
 	ct := nowInMilli()
-	ttl := ct + 30 * 60 * 1000  // Server side session valid time is 30 min
+	ttl := ct + 30*60*1000 // Server side session valid time is 30 min
 
-	ss := &defs.SimpleSession{Username:un, TTL:ttl}
+	ss := &defs.SimpleSession{Username: un, TTL: ttl}
 	sessionMap.Store(sid, ss)
 	if err := dbops.InsertSeesion(sid, ttl, un); err != nil {
 		log.Printf("insert session fail : %s", err)
@@ -59,7 +59,6 @@ func GenerateNewSessionId(un string) string {
 	}
 	return sid
 }
-
 
 func IsSessionExpired(sid string) (string, bool) {
 	ss, ok := sessionMap.Load(sid)
@@ -85,4 +84,3 @@ func IsSessionExpired(sid string) (string, bool) {
 		return ss.Username, false
 	}
 }
-
