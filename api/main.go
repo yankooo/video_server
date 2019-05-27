@@ -1,36 +1,57 @@
-/**
- *  @author: yanKoo
- *  @Date: 2019/3/10 20:42
- *  @Description:
- */
 package main
 
 import (
 	"github.com/julienschmidt/httprouter"
-	"log"
+	"github.com/yankooo/video_server/api/session"
 	"net/http"
 )
 
-/**
- * 注册路由handler
- * 处理流程：handler->validation(1.request, 2.user)->business logic->response
- *     1. data model
- *     2. error handling
- */
+type middleWareHandler struct {
+	r *httprouter.Router
+}
+
+func NewMiddleWareHandler(r *httprouter.Router) http.Handler {
+	m := middleWareHandler{}
+	m.r = r
+	return m
+}
+
+func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//check session
+	validateUserSession(r)
+
+	m.r.ServeHTTP(w, r)
+}
+
 func RegisterHandlers() *httprouter.Router {
 	router := httprouter.New()
 
-	router.POST("/user", SignedUp) // SignedUp
+	router.POST("/user", CreateUser)
 
-	router.POST("/user/:user_name", SignedIn) // SignedIn
+	router.POST("/user/:username", Login)
+
+	router.GET("/user/:username", GetUserInfo)
+
+	router.POST("/user/:username/videos", AddNewVideo)
+
+	router.GET("/user/:username/videos", ListAllVideos)
+
+	router.DELETE("/user/:username/videos/:vid-id", DeleteVideo)
+
+	router.POST("/videos/:vid-id/comments", PostComment)
+
+	router.GET("/videos/:vid-id/comments", ShowComments)
 
 	return router
 }
 
+func Prepare() {
+	session.LoadSessionsFromDB()
+}
+
 func main() {
+	Prepare()
 	r := RegisterHandlers()
-	err := http.ListenAndServe(":8080", r)
-	if err != nil {
-		log.Println("监听失败")
-	}
+	mh := NewMiddleWareHandler(r)
+	http.ListenAndServe(":8000", mh)
 }

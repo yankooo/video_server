@@ -1,8 +1,3 @@
-/**
-* @Author: yanKoo
-* @Date: 2019/3/12 15:57
-* @Description: 对数据库中的session表做操作
- */
 package dbops
 
 import (
@@ -13,23 +8,26 @@ import (
 	"sync"
 )
 
-func InsertSeesion(sid string, ttl int64, uname string) error {
-	ttlStr := strconv.FormatInt(ttl, 10)
+func InsertSession(sid string, ttl int64, uname string) error {
+	ttlstr := strconv.FormatInt(ttl, 10)
 	stmtIns, err := dbConn.Prepare("INSERT INTO sessions (session_id, TTL, login_name) VALUES (?, ?, ?)")
+	defer stmtIns.Close()
 	if err != nil {
 		return err
 	}
 
-	if _, err = stmtIns.Exec(sid, ttlStr, uname); err != nil {
+	_, err = stmtIns.Exec(sid, ttlstr, uname)
+	if err != nil {
 		return err
 	}
-	defer stmtIns.Close()
+
 	return nil
 }
 
 func RetrieveSession(sid string) (*defs.SimpleSession, error) {
 	ss := &defs.SimpleSession{}
 	stmtOut, err := dbConn.Prepare("SELECT TTL, login_name FROM sessions WHERE session_id=?")
+	defer stmtOut.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +46,6 @@ func RetrieveSession(sid string) (*defs.SimpleSession, error) {
 		return nil, err
 	}
 
-	defer stmtOut.Close()
 	return ss, nil
 }
 

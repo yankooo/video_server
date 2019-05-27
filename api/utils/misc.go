@@ -1,16 +1,14 @@
-/**
-* @Author: yanKoo
-* @Date: 2019/3/12 13:52
-* @Description:
- */
 package utils
 
 import (
 	"crypto/rand"
 	"fmt"
 	"io"
+	"log"
+	"net/http"
 	"strconv"
 	"time"
+	"yankooo/config"
 )
 
 func NewUUID() (string, error) {
@@ -31,11 +29,11 @@ func GetCurrentTimestampSec() int {
 	return ts
 }
 
-//func SendDeleteVideoRequest(id string) {
-//	addr := config.GetLbAddr() + ":9001"
-//	url := "http://" + addr + "/video-delete-record/" + id
-//	_, err := http.Get(url)
-//	if err != nil {
-//		log.Printf("Sending deleting video request error: %s", err)
-//	}
-//}
+func SendDeleteVideoRequest(id string) {
+	addr := config.GetLbAddr() + ":9001"
+	url := "http://" + addr + "/video-delete-record/" + id
+	_, err := http.Get(url)
+	if err != nil {
+		log.Printf("Sending deleting video request error: %s", err)
+	}
+}

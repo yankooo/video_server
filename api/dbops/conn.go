@@ -1,8 +1,3 @@
-/**
- *  @author: yanKoo
- *  @Date: 2019/3/10 22:32
- *  @Description:
- */
 package dbops
 
 import (
@@ -12,14 +7,11 @@ import (
 
 var (
 	dbConn *sql.DB
-	err    error
+	err error
 )
 
-/**
- * 连接数据库
- */
 func init() {
-	dbConn, err = sql.Open("mysql", "root:123456@tcp(localhost:3306)/video_server")
+	dbConn, err = sql.Open("mysql", "root:123!@#@tcp(localhost:3306)/video_server?charset=utf8")
 	if err != nil {
 		panic(err.Error())
 	}
