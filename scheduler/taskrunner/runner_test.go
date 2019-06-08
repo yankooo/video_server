@@ -16,7 +16,8 @@ func TestRunner(t *testing.T) {
 	d := func(dc dataChan) error {
 		for i := 0; i < 30; i++ {
 			dc <- i
-			log.Println("gen data: ", i)
+			log.Printf("Dispatcher sent: %d", i)
+
 		}
 		return nil
 	}
@@ -40,3 +41,6 @@ func TestRunner(t *testing.T) {
 	go r.StartAll()
 time.Sleep(time.Second*1000000)
 }
+
+
+

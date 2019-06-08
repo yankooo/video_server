@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"github.com/yankooo/video_server/scheduler/dbops"
 	"net/http"
-	"video_server/schedule/dbops"
 )
 
 func vidDelRecHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

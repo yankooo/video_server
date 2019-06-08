@@ -13,7 +13,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
 func testPageHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -25,22 +24,24 @@ func testPageHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params
 
 func streamHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params){
 	vid := p.ByName("vid-id")
-	vl := VIDEO_DIR + vid + ".mp4"
-	video, err := os.Open(vl)
-	if err != nil {
-		log.Printf("Error when try to open file: %v", err)
-		sendErrorResponse(w, http.StatusInternalServerError, "Internal Error")
-		return
-	}
-	defer func() {
-		if err := video.Close(); err != nil {
-			log.Println("Video close error")
-		}
-	}()
+	//vl := VIDEO_DIR + vid + ".mp4"
+	//video, err := os.Open(vl)
+	//if err != nil {
+	//	log.Printf("Error when try to open file: %v", err)
+	//	sendErrorResponse(w, http.StatusInternalServerError, "Internal Error")
+	//	return
+	//}
+	//defer func() {
+	//	if err := video.Close(); err != nil {
+	//		log.Println("Video close error")
+	//	}
+	//}()
+	//
+	//w.Header().Set("Content-Type", "video/mp4")
+	//http.ServeContent(w, r, "", time.Now(), video)
 
-	w.Header().Set("Content-Type", "video/mp4")
-
-	http.ServeContent(w, r, "", time.Now(), video)
+	targetUrl := "http://yankooo-videos.oss-cn-shanghai.aliyuncs.com/videos/" + vid
+	http.Redirect(w, r, targetUrl, http.StatusMovedPermanently)
 }
 
 
@@ -72,6 +73,16 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params){
 		return
 	}
 
+	ossFn := "videos/" + fn
+	path := "./videos/" + fn
+	bn := "yankooo-videos"
+	ret := UploadToOss(ossFn, path, bn)
+	if !ret {
+		sendErrorResponse(w, http.StatusInternalServerError, "Internal error")
+		return
+	}
+
+	os.Remove(path)
 	w.WriteHeader(http.StatusCreated)
 	_, _ = io.WriteString(w, "Uploaded successfully")
 }

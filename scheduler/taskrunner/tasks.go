@@ -7,17 +7,21 @@ package taskrunner
 
 import (
 	"errors"
+	"github.com/yankooo/video_server/scheduler/dbops"
+	"github.com/yankooo/video_server/scheduler/ossops"
 	"log"
-	"os"
 	"sync"
-	"video_server/schedule/dbops"
 )
 
 func deleteVideo(vid string) error {
-	err := os.Remove(VIDEO_PATH + vid)
-
-	if err !=nil && !os.IsNotExist(err){
-		log.Printf("Delete video file error: %v", err)
+	//err := os.Remove(VIDEO_PATH + vid)
+	//if err !=nil && !os.IsNotExist(err){
+	//	log.Printf("Delete video file error: %v", err)
+	//}
+	//return nil
+	if ret := ossops.DeleteObject("videos/" +vid, "yankooo-videos"); !ret {
+		log.Printf("Deleting video error, oss operation failed.")
+		return errors.New("deleting video error")
 	}
 	return nil
 }
