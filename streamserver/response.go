@@ -3,7 +3,7 @@
  *  @Date: 2019/4/1 22:00
  *  @Description:
  */
-package main
+package streamserver
 
 import (
 	"io"
@@ -11,10 +11,9 @@ import (
 	"net/http"
 )
 
-func sendErrorResponse(w http.ResponseWriter, sc int, errMsg string){
+func SendErrorResponse(w http.ResponseWriter, sc int, errMsg string) {
 	w.WriteHeader(sc)
 	if _, err := io.WriteString(w, errMsg); err != nil {
 		log.Println("io writer string is error : ", err)
 	}
 }
-

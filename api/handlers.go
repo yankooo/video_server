@@ -1,7 +1,6 @@
-package main
+package api
 
 import (
-	//"io"
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"github.com/yankooo/video_server/api/dbops"

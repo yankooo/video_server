@@ -2,21 +2,21 @@ package gateway
 
 import (
 	"github.com/gorilla/websocket"
+	"github.com/yankooo/video_server/common"
 	"sync"
 	"time"
-	"github.com/owenliang/go-push/common"
 )
 
 type WSConnection struct {
-	mutex sync.Mutex
-	connId uint64
-	wsSocket *websocket.Conn
-	inChan chan*common.WSMessage
-	outChan chan*common.WSMessage
-	closeChan chan byte
-	isClosed bool
-	lastHeartbeatTime time.Time // 最近一次心跳时间
-	rooms map[string]bool	// 加入了哪些房间
+	mutex             sync.Mutex
+	connId            uint64
+	wsSocket          *websocket.Conn
+	inChan            chan *common.WSMessage
+	outChan           chan *common.WSMessage
+	closeChan         chan byte
+	isClosed          bool
+	lastHeartbeatTime time.Time       // 最近一次心跳时间
+	rooms             map[string]bool // 加入了哪些房间
 }
 
 // 读websocket
@@ -25,7 +25,7 @@ func (wsConnection *WSConnection) readLoop() {
 		msgType int
 		msgData []byte
 		message *common.WSMessage
-		err error
+		err     error
 	)
 	for {
 		if msgType, msgData, err = wsConnection.wsSocket.ReadMessage(); err != nil {
@@ -36,7 +36,7 @@ func (wsConnection *WSConnection) readLoop() {
 
 		select {
 		case wsConnection.inChan <- message:
-		case <- wsConnection.closeChan:
+		case <-wsConnection.closeChan:
 			goto CLOSED
 		}
 	}
@@ -50,15 +50,15 @@ CLOSED:
 func (wsConnection *WSConnection) writeLoop() {
 	var (
 		message *common.WSMessage
-		err error
+		err     error
 	)
 	for {
 		select {
-		case message = <- wsConnection.outChan:
+		case message = <-wsConnection.outChan:
 			if err = wsConnection.wsSocket.WriteMessage(message.MsgType, message.MsgData); err != nil {
 				goto ERR
 			}
-		case <- wsConnection.closeChan:
+		case <-wsConnection.closeChan:
 			goto CLOSED
 		}
 	}
@@ -68,18 +68,18 @@ CLOSED:
 }
 
 /**
-		以下是API
- */
+以下是API
+*/
 
 func InitWSConnection(connId uint64, wsSocket *websocket.Conn) (wsConnection *WSConnection) {
 	wsConnection = &WSConnection{
-		wsSocket: wsSocket,
-		connId: connId,
-		inChan: make(chan *common.WSMessage, G_config.WsInChannelSize),
-		outChan: make(chan *common.WSMessage, G_config.WsOutChannelSize),
-		closeChan: make(chan byte),
+		wsSocket:          wsSocket,
+		connId:            connId,
+		inChan:            make(chan *common.WSMessage, G_config.WsInChannelSize),
+		outChan:           make(chan *common.WSMessage, G_config.WsOutChannelSize),
+		closeChan:         make(chan byte),
 		lastHeartbeatTime: time.Now(),
-		rooms: make(map[string]bool),
+		rooms:             make(map[string]bool),
 	}
 
 	go wsConnection.readLoop()
@@ -93,9 +93,9 @@ func (wsConnection *WSConnection) SendMessage(message *common.WSMessage) (err er
 	select {
 	case wsConnection.outChan <- message:
 		SendMessageTotal_INCR()
-	case <- wsConnection.closeChan:
+	case <-wsConnection.closeChan:
 		err = common.ERR_CONNECTION_LOSS
-	default:	// 写操作不会阻塞, 因为channel已经预留给websocket一定的缓冲空间
+	default: // 写操作不会阻塞, 因为channel已经预留给websocket一定的缓冲空间
 		err = common.ERR_SEND_MESSAGE_FULL
 		SendMessageFail_INCR()
 	}
@@ -105,8 +105,8 @@ func (wsConnection *WSConnection) SendMessage(message *common.WSMessage) (err er
 // 读取消息
 func (wsConnection *WSConnection) ReadMessage() (message *common.WSMessage, err error) {
 	select {
-	case message = <- wsConnection.inChan:
-	case <- wsConnection.closeChan:
+	case message = <-wsConnection.inChan:
+	case <-wsConnection.closeChan:
 		err = common.ERR_CONNECTION_LOSS
 	}
 	return
@@ -135,7 +135,7 @@ func (wsConnection *WSConnection) IsAlive() bool {
 	defer wsConnection.mutex.Unlock()
 
 	// 连接已关闭 或者 太久没有心跳
-	if wsConnection.isClosed || now.Sub(wsConnection.lastHeartbeatTime) > time.Duration(G_config.WsHeartbeatInterval) * time.Second {
+	if wsConnection.isClosed || now.Sub(wsConnection.lastHeartbeatTime) > time.Duration(G_config.WsHeartbeatInterval)*time.Second {
 		return false
 	}
 	return true

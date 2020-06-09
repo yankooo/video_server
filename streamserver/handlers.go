@@ -3,7 +3,7 @@
  *  @Date: 2019/4/1 21:53
  *  @Description:
  */
-package main
+package streamserver
 
 import (
 	"github.com/julienschmidt/httprouter"
@@ -15,14 +15,13 @@ import (
 	"os"
 )
 
-func testPageHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func TestPageHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	t, _ := template.ParseFiles("videos/upload.html")
 
 	_ = t.Execute(w, nil)
 }
 
-
-func streamHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params){
+func StreamHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	vid := p.ByName("vid-id")
 	//vl := VIDEO_DIR + vid + ".mp4"
 	//video, err := os.Open(vl)
@@ -40,12 +39,11 @@ func streamHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params){
 	//w.Header().Set("Content-Type", "video/mp4")
 	//http.ServeContent(w, r, "", time.Now(), video)
 
-	targetUrl := "http://yankooo-videos.oss-cn-shanghai.aliyuncs.com/videos/" + vid
+	targetUrl := "http://yankooo-videos.oss-cn.aliyuncs.com/videos/" + vid
 	http.Redirect(w, r, targetUrl, http.StatusMovedPermanently)
 }
 
-
-func uploadHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params){
+func UploadHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	r.Body = http.MaxBytesReader(w, r.Body, MAX_UPLOAD_SIZE)
 	if err := r.ParseMultipartForm(MAX_UPLOAD_SIZE); err != nil {
 		sendErrorResponse(w, http.StatusBadRequest, "File is too big")
@@ -66,7 +64,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params){
 	}
 
 	fn := p.ByName("vid-id")
-	err = ioutil.WriteFile(VIDEO_DIR + fn + ".mp4", data, 0777)
+	err = ioutil.WriteFile(VIDEO_DIR+fn+".mp4", data, 0777)
 	if err != nil {
 		log.Printf("Write file error: %v", err)
 		sendErrorResponse(w, http.StatusInternalServerError, "Internal Error")

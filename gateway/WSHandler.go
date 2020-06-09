@@ -1,10 +1,10 @@
 package gateway
 
 import (
-	"time"
-	"github.com/gorilla/websocket"
 	"encoding/json"
-	"github.com/owenliang/go-push/common"
+	"github.com/gorilla/websocket"
+	"github.com/yankooo/video_server/common"
+	"time"
 )
 
 // 每隔1秒, 检查一次连接是否健康
@@ -15,13 +15,13 @@ func (wsConnection *WSConnection) heartbeatChecker() {
 	timer = time.NewTimer(time.Duration(G_config.WsHeartbeatInterval) * time.Second)
 	for {
 		select {
-		case <- timer.C:
+		case <-timer.C:
 			if !wsConnection.IsAlive() {
 				wsConnection.Close()
 				goto EXIT
 			}
 			timer.Reset(time.Duration(G_config.WsHeartbeatInterval) * time.Second)
-		case <- wsConnection.closeChan:
+		case <-wsConnection.closeChan:
 			timer.Stop()
 			goto EXIT
 		}
@@ -53,7 +53,7 @@ func (wsConnection *WSConnection) handlePing(bizReq *common.BizMessage) (bizResp
 func (wsConnection *WSConnection) handleJoin(bizReq *common.BizMessage) (bizResp *common.BizMessage, err error) {
 	var (
 		bizJoinData *common.BizJoinData
-		existed bool
+		existed     bool
 	)
 	bizJoinData = &common.BizJoinData{}
 	if err = json.Unmarshal(bizReq.Data, bizJoinData); err != nil {
@@ -85,7 +85,7 @@ func (wsConnection *WSConnection) handleJoin(bizReq *common.BizMessage) (bizResp
 func (wsConnection *WSConnection) handleLeave(bizReq *common.BizMessage) (bizResp *common.BizMessage, err error) {
 	var (
 		bizLeaveData *common.BizLeaveData
-		existed bool
+		existed      bool
 	)
 	bizLeaveData = &common.BizLeaveData{}
 	if err = json.Unmarshal(bizReq.Data, bizLeaveData); err != nil {
@@ -124,10 +124,10 @@ func (wsConnection *WSConnection) leaveAll() {
 func (wsConnection *WSConnection) WSHandle() {
 	var (
 		message *common.WSMessage
-		bizReq *common.BizMessage
+		bizReq  *common.BizMessage
 		bizResp *common.BizMessage
-		err error
-		buf []byte
+		err     error
+		buf     []byte
 	)
 
 	// 连接加入管理器, 可以推送端查找到

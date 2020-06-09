@@ -1,14 +1,14 @@
-package main
+package web
 
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/yankooo/video_server/conf"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
-	"yankooo/config"
 )
 
 var httpClient *http.Client
@@ -22,7 +22,7 @@ func request(b *ApiBody, w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	u, _ := url.Parse(b.Url)
-	u.Host = config.GetLbAddr() + ":" + u.Port()
+	u.Host = conf.GetLbAddr() + ":" + u.Port()
 	newUrl := u.String()
 
 	switch b.Method {

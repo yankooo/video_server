@@ -1,4 +1,4 @@
-package main
+package scheduler
 
 import (
 	"github.com/julienschmidt/httprouter"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func vidDelRecHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func VidDelRecHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	vid := p.ByName("vid-id")
 
 	if len(vid) == 0 {

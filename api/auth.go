@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"github.com/yankooo/video_server/api/defs"
@@ -11,7 +11,7 @@ var HEADER_FIELD_UNAME = "X-User-Name"
 
 // Check if the current user has the permission
 // Use session id to do the check
-func validateUserSession(r *http.Request) bool {
+func ValidateUserSession(r *http.Request) bool {
 	sid := r.Header.Get(HEADER_FIELD_SESSION)
 	if len(sid) == 0 {
 		return false

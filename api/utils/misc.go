@@ -3,12 +3,12 @@ package utils
 import (
 	"crypto/rand"
 	"fmt"
+	"github.com/yankooo/video_server/conf"
 	"io"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
-	"yankooo/config"
 )
 
 func NewUUID() (string, error) {
@@ -30,7 +30,7 @@ func GetCurrentTimestampSec() int {
 }
 
 func SendDeleteVideoRequest(id string) {
-	addr := config.GetLbAddr() + ":9001"
+	addr := conf.GetLbAddr() + ":9001"
 	url := "http://" + addr + "/video-delete-record/" + id
 	_, err := http.Get(url)
 	if err != nil {

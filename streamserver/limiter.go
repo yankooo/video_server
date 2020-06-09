@@ -3,7 +3,7 @@
  *  @Date: 2019/4/1 21:53
  *  @Description:
  */
-package main
+package streamserver
 
 import (
 	"log"
@@ -11,13 +11,13 @@ import (
 
 type ConnLimiter struct {
 	concurrentConn int
-	bucket chan int
+	bucket         chan int
 }
 
 func NewConnLimiter(cc int) *ConnLimiter {
-	return &ConnLimiter {
+	return &ConnLimiter{
 		concurrentConn: cc,
-		bucket: make(chan int, cc),
+		bucket:         make(chan int, cc),
 	}
 }
 
@@ -32,7 +32,6 @@ func (cl *ConnLimiter) GetConn() bool {
 }
 
 func (cl *ConnLimiter) ReleaseConn() {
-	c :=<- cl.bucket
+	c := <-cl.bucket
 	log.Printf("New connction coming: %d", c)
 }
-

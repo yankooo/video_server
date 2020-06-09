@@ -1,4 +1,4 @@
-package config
+package web
 
 import (
 	"encoding/json"

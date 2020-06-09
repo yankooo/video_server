@@ -1,8 +1,8 @@
 package logic
 
 import (
-	"sync/atomic"
 	"encoding/json"
+	"sync/atomic"
 )
 
 type Stats struct {
@@ -35,6 +35,6 @@ func PushFail_INCR() {
 	atomic.AddInt64(&G_stats.PushFail, 1)
 }
 
-func (stats *Stats) Dump() (data []byte, err error){
+func (stats *Stats) Dump() (data []byte, err error) {
 	return json.Marshal(G_stats)
 }

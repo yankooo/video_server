@@ -2,12 +2,12 @@ package gateway
 
 import (
 	"encoding/json"
+	"github.com/yankooo/video_server/common"
 	"time"
-	"github.com/owenliang/go-push/common"
 )
 
 type PushBatch struct {
-	items []*json.RawMessage
+	items       []*json.RawMessage
 	commitTimer *time.Timer
 
 	// union {
@@ -26,19 +26,19 @@ type PushContext struct {
 type MergeWorker struct {
 	mergeType int // 合并类型: 广播, room, uid...
 
-	contextChan chan*PushContext
-	timeoutChan chan*PushBatch
+	contextChan chan *PushContext
+	timeoutChan chan *PushBatch
 
 	// union {
-	room2Batch map[string]*PushBatch	// room合并
-	allBatch *PushBatch // 广播合并
+	room2Batch map[string]*PushBatch // room合并
+	allBatch   *PushBatch            // 广播合并
 	// }
 }
 
 // 广播消息、房间消息的合并
 type Merger struct {
-	roomWorkers  []*MergeWorker	// 房间合并
-	broadcastWorker *MergeWorker	// 广播合并
+	roomWorkers     []*MergeWorker // 房间合并
+	broadcastWorker *MergeWorker   // 广播合并
 }
 
 var (
@@ -54,8 +54,8 @@ func (worker *MergeWorker) autoCommit(batch *PushBatch) func() {
 func (worker *MergeWorker) commitBatch(batch *PushBatch) (err error) {
 	var (
 		bizPushData *common.BizPushData
-		bizMessage *common.BizMessage
-		buf []byte
+		bizMessage  *common.BizMessage
+		buf         []byte
 	)
 
 	bizPushData = &common.BizPushData{
@@ -83,16 +83,16 @@ func (worker *MergeWorker) commitBatch(batch *PushBatch) (err error) {
 
 func (worker *MergeWorker) mergeWorkerMain() {
 	var (
-		context *PushContext
-		batch *PushBatch
+		context      *PushContext
+		batch        *PushBatch
 		timeoutBatch *PushBatch
-		existed bool
-		isCreated bool
-		err error
+		existed      bool
+		isCreated    bool
+		err          error
 	)
 	for {
 		select {
-		case context = <- worker.contextChan:
+		case context = <-worker.contextChan:
 			MergerPending_DESC()
 
 			isCreated = false
@@ -103,7 +103,7 @@ func (worker *MergeWorker) mergeWorkerMain() {
 					worker.room2Batch[context.room] = batch
 					isCreated = true
 				}
-			} else if worker.mergeType == common.PUSH_TYPE_ALL {	// 广播合并
+			} else if worker.mergeType == common.PUSH_TYPE_ALL { // 广播合并
 				batch = worker.allBatch
 				if batch == nil {
 					batch = &PushBatch{}
@@ -117,7 +117,7 @@ func (worker *MergeWorker) mergeWorkerMain() {
 
 			// 新建批次, 启动超时自动提交
 			if isCreated {
-				batch.commitTimer = time.AfterFunc(time.Duration(G_config.MaxMergerDelay) * time.Millisecond, worker.autoCommit(batch))
+				batch.commitTimer = time.AfterFunc(time.Duration(G_config.MaxMergerDelay)*time.Millisecond, worker.autoCommit(batch))
 			}
 
 			// 批次未满, 继续等待下次提交
@@ -127,7 +127,7 @@ func (worker *MergeWorker) mergeWorkerMain() {
 
 			// 批次已满, 取消超时自动提交
 			batch.commitTimer.Stop()
-		case timeoutBatch = <- worker.timeoutChan:
+		case timeoutBatch = <-worker.timeoutChan:
 			if worker.mergeType == common.PUSH_TYPE_ROOM {
 				// 定时器触发时, 批次已被提交
 				if batch, existed = worker.room2Batch[timeoutBatch.room]; !existed {
@@ -166,10 +166,10 @@ func (worker *MergeWorker) mergeWorkerMain() {
 
 func initMergeWorker(mergeType int) (worker *MergeWorker) {
 	worker = &MergeWorker{
-		mergeType: mergeType,
-		room2Batch: make(map[string]*PushBatch),
-		contextChan: make(chan*PushContext, G_config.MergerChannelSize),
-		timeoutChan: make(chan*PushBatch, G_config.MergerChannelSize),
+		mergeType:   mergeType,
+		room2Batch:  make(map[string]*PushBatch),
+		contextChan: make(chan *PushContext, G_config.MergerChannelSize),
+		timeoutChan: make(chan *PushBatch, G_config.MergerChannelSize),
 	}
 	go worker.mergeWorkerMain()
 	return
@@ -181,7 +181,7 @@ func (worker *MergeWorker) pushRoom(room string, msg *json.RawMessage) (err erro
 	)
 	context = &PushContext{
 		room: room,
-		msg: msg,
+		msg:  msg,
 	}
 	select {
 	case worker.contextChan <- context:
@@ -209,13 +209,13 @@ func (worker *MergeWorker) pushAll(msg *json.RawMessage) (err error) {
 }
 
 /**
-	API
- */
+API
+*/
 
 func InitMerger() (err error) {
 	var (
 		workerIdx int
-		merger *Merger
+		merger    *Merger
 	)
 
 	merger = &Merger{
@@ -239,11 +239,11 @@ func (merger *Merger) PushAll(msg *json.RawMessage) (err error) {
 func (merger *Merger) PushRoom(room string, msg *json.RawMessage) (err error) {
 	// 计算room hash到某个worker
 	var (
-		workerIdx uint32= 0
-		ch byte
+		workerIdx uint32 = 0
+		ch        byte
 	)
 	for _, ch = range []byte(room) {
-		workerIdx = (workerIdx + uint32(ch) * 33) % uint32(G_config.MergerWorkerCount)
+		workerIdx = (workerIdx + uint32(ch)*33) % uint32(G_config.MergerWorkerCount)
 	}
 	return merger.roomWorkers[workerIdx].pushRoom(room, msg)
 }

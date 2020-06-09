@@ -37,10 +37,7 @@ func TestRunner(t *testing.T) {
 		return errors.New("executor")
 	}
 
-	r:= NewRunner(30, false, d,e)
+	r := NewRunner(30, false, d, e)
 	go r.StartAll()
-time.Sleep(time.Second*1000000)
+	time.Sleep(time.Second * 1000000)
 }
-
-
-

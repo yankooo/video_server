@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"github.com/yankooo/video_server/api"
 	"github.com/yankooo/video_server/api/session"
 	"net/http"
 )
@@ -18,7 +19,7 @@ func NewMiddleWareHandler(r *httprouter.Router) http.Handler {
 
 func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	//check session
-	validateUserSession(r)
+	api.ValidateUserSession(r)
 
 	m.r.ServeHTTP(w, r)
 }
@@ -26,21 +27,21 @@ func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func RegisterHandlers() *httprouter.Router {
 	router := httprouter.New()
 
-	router.POST("/user", CreateUser)
+	router.POST("/user", api.CreateUser)
 
-	router.POST("/user/:username", Login)
+	router.POST("/user/:username", api.Login)
 
-	router.GET("/user/:username", GetUserInfo)
+	router.GET("/user/:username", api.GetUserInfo)
 
-	router.POST("/user/:username/videos", AddNewVideo)
+	router.POST("/user/:username/videos", api.AddNewVideo)
 
-	router.GET("/user/:username/videos", ListAllVideos)
+	router.GET("/user/:username/videos", api.ListAllVideos)
 
-	router.DELETE("/user/:username/videos/:vid-id", DeleteVideo)
+	router.DELETE("/user/:username/videos/:vid-id", api.DeleteVideo)
 
-	router.POST("/videos/:vid-id/comments", PostComment)
+	router.POST("/videos/:vid-id/comments", api.PostComment)
 
-	router.GET("/videos/:vid-id/comments", ShowComments)
+	router.GET("/videos/:vid-id/comments", api.ShowComments)
 
 	return router
 }
@@ -55,4 +56,3 @@ func main() {
 	mh := NewMiddleWareHandler(r)
 	http.ListenAndServe(":8000", mh)
 }
-

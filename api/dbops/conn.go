@@ -7,7 +7,7 @@ import (
 
 var (
 	dbConn *sql.DB
-	err error
+	err    error
 )
 
 func init() {

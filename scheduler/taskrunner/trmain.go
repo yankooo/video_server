@@ -17,24 +17,24 @@ type Worker struct {
 
 func NewWorker(interval time.Duration, r *Runner) *Worker {
 	return &Worker{
-		ticker:time.NewTicker(interval * time.Second),
-		runner:r,
+		ticker: time.NewTicker(interval * time.Second),
+		runner: r,
 	}
 }
 
-func (w *Worker) startWorker(){
+func (w *Worker) startWorker() {
 	for {
 		select {
-		case <- w.ticker.C:
+		case <-w.ticker.C:
 			go w.runner.StartAll()
 		}
 	}
 }
 
-func (w *Worker) StartWorker(){
+func (w *Worker) StartWorker() {
 	for {
 		select {
-		case <- w.ticker.C:
+		case <-w.ticker.C:
 			log.Println("ticker is run")
 		}
 	}

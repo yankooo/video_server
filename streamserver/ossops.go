@@ -1,9 +1,9 @@
-package main
+package streamserver
 
 import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/yankooo/video_server/conf"
 	"log"
-	"yankooo/config"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 func init() {
 	AK = "FckdpsCxW8dtsIgmzvA0MDZdF8BQ0U"
 	SK = ""
-	EP = config.GetOssAddr()
+	EP = conf.GetOssAddr()
 }
 func UploadToOss(filename string, path string, bn string) bool {
 

@@ -1,24 +1,24 @@
 package main
 
 import (
-	"net/http"
-	"fmt"
-	"os"
-	"io/ioutil"
 	"crypto/tls"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
 )
 
 func main() {
 	var (
-		resp *http.Response
-		err error
-		buf []byte
+		resp   *http.Response
+		err    error
+		buf    []byte
 		client *http.Client
 	)
 
 	client = &http.Client{
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true,},	// 不校验服务端证书
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // 不校验服务端证书
 		},
 	}
 

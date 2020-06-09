@@ -38,7 +38,6 @@ func GetUserCredential(loginName string) (string, error) {
 		return "", err
 	}
 
-
 	return pwd, nil
 }
 
@@ -79,7 +78,6 @@ func GetUser(loginName string) (*defs.User, error) {
 	}
 
 	res := &defs.User{Id: id, LoginName: loginName, Pwd: pwd}
-
 
 	return res, nil
 }
@@ -127,7 +125,6 @@ func GetVideoInfo(vid string) (*defs.VideoInfo, error) {
 		return nil, nil
 	}
 
-
 	res := &defs.VideoInfo{Id: vid, AuthorId: aid, Name: name, DisplayCtime: dct}
 
 	return res, nil
@@ -162,7 +159,6 @@ func ListVideoInfo(uname string, from, to int) ([]*defs.VideoInfo, error) {
 		vi := &defs.VideoInfo{Id: id, AuthorId: aid, Name: name, DisplayCtime: ctime}
 		res = append(res, vi)
 	}
-
 
 	return res, nil
 }
@@ -230,8 +226,8 @@ func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
 }
 
 // func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
-// 	stmtOut, err := dbConn.Prepare(`SELECT comments.id, users.login_name, comments.content FROM comments 
-// 		INNER JOIN users ON comments.author_id = users.id 
+// 	stmtOut, err := dbConn.Prepare(`SELECT comments.id, users.login_name, comments.content FROM comments
+// 		INNER JOIN users ON comments.author_id = users.id
 // 		WHERE comments.video_id = ? AND comments.time > FROM_UNIXTIME(?) AND comments.time <= FROM_UNIXTIME(?)
 // 		ORDER BY comments.time DESC`)
 

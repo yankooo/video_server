@@ -1,8 +1,9 @@
-package main
+package web
 
 import (
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
+	"github.com/yankooo/video_server/conf"
 	"html/template"
 	"io"
 	"io/ioutil"
@@ -10,7 +11,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"yankooo/config"
 )
 
 type HomePage struct {
@@ -21,7 +21,7 @@ type UserPage struct {
 	Name string
 }
 
-func homeHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func HomeHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	cname, err1 := r.Cookie("username")
 	sid, err2 := r.Cookie("session")
 
@@ -43,7 +43,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	}
 }
 
-func userHomeHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func UserHomeHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	cname, err1 := r.Cookie("username")
 	_, err2 := r.Cookie("session")
 
@@ -70,7 +70,7 @@ func userHomeHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	t.Execute(w, p)
 }
 
-func apiHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func ApiHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	defer r.Body.Close()
 	if r.Method != http.MethodPost {
 		re, _ := json.Marshal(ErrorRequestNotRecognized)
@@ -89,14 +89,14 @@ func apiHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	request(apibody, w, r)
 }
 
-func proxyVideoHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	u, _ := url.Parse("http://" + config.GetLbAddr() + ":9000/")
+func ProxyVideoHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	u, _ := url.Parse("http://" + conf.GetLbAddr() + ":9000/")
 	proxy := httputil.NewSingleHostReverseProxy(u)
 	proxy.ServeHTTP(w, r)
 }
 
-func proxyUploadHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	u, _ := url.Parse("http://" + config.GetLbAddr() + ":9000/")
+func ProxyUploadHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	u, _ := url.Parse("http://" + conf.GetLbAddr() + ":9000/")
 	proxy := httputil.NewSingleHostReverseProxy(u)
 	proxy.ServeHTTP(w, r)
 }

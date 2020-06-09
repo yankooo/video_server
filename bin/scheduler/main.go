@@ -7,6 +7,7 @@ package main
 
 import (
 	"github.com/julienschmidt/httprouter"
+	"github.com/yankooo/video_server/scheduler"
 	"github.com/yankooo/video_server/scheduler/taskrunner"
 	"net/http"
 	"time"
@@ -15,7 +16,7 @@ import (
 func RegisterHandlers() *httprouter.Router {
 	router := httprouter.New()
 
-	router.GET("/video-delete-record/:vid-id", vidDelRecHandler)
+	router.GET("/video-delete-record/:vid-id", scheduler.VidDelRecHandler)
 
 	return router
 }
@@ -25,7 +26,6 @@ func main() {
 
 	go w.StartWorker()
 	time.Sleep(time.Second * 30)
-
 
 	go taskrunner.Start()
 	r := RegisterHandlers()

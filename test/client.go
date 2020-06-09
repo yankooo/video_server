@@ -8,9 +8,9 @@ package main
 
 import (
 	"flag"
+	"github.com/gorilla/websocket"
 	"log"
 	"net/url"
-	"github.com/gorilla/websocket"
 	"time"
 )
 

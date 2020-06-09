@@ -27,7 +27,6 @@ func NewRunner(size int, longlived bool, d fn, e fn) *Runner {
 	}
 }
 
-
 func (r *Runner) startDispatch() {
 	defer func() {
 		if !r.longLived {
@@ -40,7 +39,7 @@ func (r *Runner) startDispatch() {
 	// 常驻任务,所以用for循环
 	for {
 		select {
-		case c :=<- r.Controller:
+		case c := <-r.Controller:
 			if c == READY_TO_DISPATCH {
 				err := r.Dispatcher(r.Data)
 				if err != nil {
@@ -52,24 +51,23 @@ func (r *Runner) startDispatch() {
 			}
 
 			if c == READY_TO_EXECUTE {
-				err:= r.Executor(r.Data)
+				err := r.Executor(r.Data)
 				if err != nil {
 					r.Error <- CLOSE
 				} else {
 					r.Controller <- READY_TO_DISPATCH
 				}
 			}
-		case e :=<- r.Error:
+		case e := <-r.Error:
 			if e == CLOSE {
 				return
 			}
-		//default:
+			//default:
 		}
 	}
 }
 
-func (r *Runner) StartAll()  {
+func (r *Runner) StartAll() {
 	r.Controller <- READY_TO_DISPATCH
 	r.startDispatch()
 }
-

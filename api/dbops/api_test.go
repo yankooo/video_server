@@ -1,12 +1,11 @@
 package dbops
 
 import (
-	"testing"
-	"strconv"
-	"time"
 	"fmt"
+	"strconv"
+	"testing"
+	"time"
 )
-
 
 var tempvid string
 
@@ -44,7 +43,7 @@ func testGetUser(t *testing.T) {
 	}
 }
 
-func  testDeleteUser(t *testing.T) {
+func testDeleteUser(t *testing.T) {
 	err := DeleteUser("avenssi", "123")
 	if err != nil {
 		t.Errorf("Error of DeleteUser: %v", err)
@@ -95,7 +94,7 @@ func testDeleteVideoInfo(t *testing.T) {
 
 func testRegetVideoInfo(t *testing.T) {
 	vi, err := GetVideoInfo(tempvid)
-	if err != nil || vi != nil{
+	if err != nil || vi != nil {
 		t.Errorf("Error of RegetVideoInfo: %v", err)
 	}
 }
@@ -132,8 +131,4 @@ func testListComments(t *testing.T) {
 	for i, ele := range res {
 		fmt.Printf("comment: %d, %v \n", i, ele)
 	}
-}	
-
-
-
-
+}

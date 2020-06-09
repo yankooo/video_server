@@ -1,13 +1,13 @@
 package gateway
 
 import (
-	"net/http"
-	"time"
-	"net"
-	"strconv"
-	"encoding/json"
 	"crypto/tls"
-	"github.com/owenliang/go-push/common"
+	"encoding/json"
+	"github.com/yankooo/video_server/common"
+	"net"
+	"net/http"
+	"strconv"
+	"time"
 )
 
 type Service struct {
@@ -21,8 +21,8 @@ var (
 // 全量推送POST msg={}
 func handlePushAll(resp http.ResponseWriter, req *http.Request) {
 	var (
-		err error
-		items string
+		err    error
+		items  string
 		msgArr []json.RawMessage
 		msgIdx int
 	)
@@ -35,7 +35,7 @@ func handlePushAll(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	for msgIdx, _  = range msgArr {
+	for msgIdx, _ = range msgArr {
 		G_merger.PushAll(&msgArr[msgIdx])
 	}
 }
@@ -43,9 +43,9 @@ func handlePushAll(resp http.ResponseWriter, req *http.Request) {
 // 房间推送POST room=xxx&msg
 func handlePushRoom(resp http.ResponseWriter, req *http.Request) {
 	var (
-		err error
-		room string
-		items string
+		err    error
+		room   string
+		items  string
 		msgArr []json.RawMessage
 		msgIdx int
 	)
@@ -60,7 +60,7 @@ func handlePushRoom(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	for msgIdx, _  = range msgArr {
+	for msgIdx, _ = range msgArr {
 		G_merger.PushRoom(room, &msgArr[msgIdx])
 	}
 }
@@ -69,7 +69,7 @@ func handlePushRoom(resp http.ResponseWriter, req *http.Request) {
 func handleStats(resp http.ResponseWriter, req *http.Request) {
 	var (
 		data []byte
-		err error
+		err  error
 	)
 
 	if data, err = G_stats.Dump(); err != nil {
@@ -81,8 +81,8 @@ func handleStats(resp http.ResponseWriter, req *http.Request) {
 
 func InitService() (err error) {
 	var (
-		mux *http.ServeMux
-		server *http.Server
+		mux      *http.ServeMux
+		server   *http.Server
 		listener net.Listener
 	)
 
@@ -99,13 +99,13 @@ func InitService() (err error) {
 
 	// HTTP/2 TLS服务
 	server = &http.Server{
-		ReadTimeout: time.Duration(G_config.ServiceReadTimeout) * time.Millisecond,
+		ReadTimeout:  time.Duration(G_config.ServiceReadTimeout) * time.Millisecond,
 		WriteTimeout: time.Duration(G_config.ServiceWriteTimeout) * time.Millisecond,
-		Handler: mux,
+		Handler:      mux,
 	}
 
 	// 监听端口
-	if listener, err = net.Listen("tcp", ":" + strconv.Itoa(G_config.ServicePort)); err != nil {
+	if listener, err = net.Listen("tcp", ":"+strconv.Itoa(G_config.ServicePort)); err != nil {
 		return
 	}
 

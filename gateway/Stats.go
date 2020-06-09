@@ -1,8 +1,8 @@
 package gateway
 
 import (
-	"sync/atomic"
 	"encoding/json"
+	"sync/atomic"
 )
 
 type Stats struct {
@@ -11,12 +11,12 @@ type Stats struct {
 
 	// 反馈客户端的推送压力
 	SendMessageTotal int64 `json:"sendMessageTotal"`
-	SendMessageFail int64 `json:"sendMessageFail"`
+	SendMessageFail  int64 `json:"sendMessageFail"`
 
 	// 反馈ConnMgr消息分发模块的压力
 	DispatchPending int64 `json:"dispatchPending"`
-	PushJobPending int64 `json:"pushJobPending"`
-	DispatchFail int64 `json:"dispatchFail"`
+	PushJobPending  int64 `json:"pushJobPending"`
+	DispatchFail    int64 `json:"dispatchFail"`
 
 	// 返回出在线的房间总数, 有利于分析内存上涨的原因
 	RoomCount int64 `json:"roomCount"`
@@ -26,9 +26,9 @@ type Stats struct {
 
 	// Merger模块合并发送的消息总数与失败总数
 	MergerRoomTotal int64 `json:"mergerRoomTotal"`
-	MergerAllTotal int64 `json:"mergerAllTotal"`
-	MergerRoomFail int64 `json:"mergerRoomFail"`
-	MergerAllFail int64 `json:"mergerAllFail"`
+	MergerAllTotal  int64 `json:"mergerAllTotal"`
+	MergerRoomFail  int64 `json:"mergerRoomFail"`
+	MergerAllFail   int64 `json:"mergerAllFail"`
 }
 
 var (
@@ -108,6 +108,6 @@ func SendMessageTotal_INCR() {
 	atomic.AddInt64(&G_stats.SendMessageTotal, 1)
 }
 
-func (stats *Stats) Dump() (data []byte, err error){
+func (stats *Stats) Dump() (data []byte, err error) {
 	return json.Marshal(G_stats)
 }

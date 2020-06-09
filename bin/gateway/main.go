@@ -1,20 +1,20 @@
 package main
 
 import (
-	"github.com/owenliang/go-push/gateway"
-	"fmt"
-	"os"
 	"flag"
+	"fmt"
+	"github.com/yankooo/video_server/gateway"
+	"os"
 	"runtime"
 	"time"
 )
 
 var (
-	confFile string		// 配置文件路径
+	confFile string // 配置文件路径
 )
 
 func initArgs() {
-	flag.StringVar(&confFile, "config", "./gateway.json", "where gateway.json is.")
+	flag.StringVar(&confFile, "conf", "./gateway.json", "where gateway.json is.")
 	flag.Parse()
 }
 
@@ -22,7 +22,7 @@ func initEnv() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 }
 
-func main()  {
+func main() {
 	var (
 		err error
 	)

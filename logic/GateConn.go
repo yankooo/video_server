@@ -1,18 +1,18 @@
 package logic
 
 import (
-	"net/http"
 	"crypto/tls"
-	"time"
+	"golang.org/x/net/http2"
+	"net/http"
 	"net/url"
 	"strconv"
-	"golang.org/x/net/http2"
+	"time"
 )
 
 // 与网关之间的通讯
 type GateConn struct {
 	schema string
-	client *http.Client	// 内置长连接+并发连接数
+	client *http.Client // 内置长连接+并发连接数
 }
 
 func InitGateConn(gatewayConfig *GatewayConfig) (gateConn *GateConn, err error) {
@@ -25,10 +25,10 @@ func InitGateConn(gatewayConfig *GatewayConfig) (gateConn *GateConn, err error) 
 	}
 
 	transport = &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true,},	// 不校验服务端证书
-		MaxIdleConns: G_config.GatewayMaxConnection,
+		TLSClientConfig:     &tls.Config{InsecureSkipVerify: true}, // 不校验服务端证书
+		MaxIdleConns:        G_config.GatewayMaxConnection,
 		MaxIdleConnsPerHost: G_config.GatewayMaxConnection,
-		IdleConnTimeout: time.Duration(G_config.GatewayIdleTimeout) * time.Second,	// 连接空闲超时
+		IdleConnTimeout:     time.Duration(G_config.GatewayIdleTimeout) * time.Second, // 连接空闲超时
 	}
 	// 启动HTTP/2协议
 	http2.ConfigureTransport(transport)
@@ -36,7 +36,7 @@ func InitGateConn(gatewayConfig *GatewayConfig) (gateConn *GateConn, err error) 
 	// HTTP/2 客户端
 	gateConn.client = &http.Client{
 		Transport: transport,
-		Timeout: time.Duration(G_config.GatewayTimeout) * time.Millisecond, // 请求超时
+		Timeout:   time.Duration(G_config.GatewayTimeout) * time.Millisecond, // 请求超时
 	}
 	return
 }
@@ -45,9 +45,9 @@ func InitGateConn(gatewayConfig *GatewayConfig) (gateConn *GateConn, err error) 
 func (gateConn *GateConn) PushAll(itemsJson []byte) (err error) {
 	var (
 		apiUrl string
-		form url.Values
-		resp *http.Response
-		retry int
+		form   url.Values
+		resp   *http.Response
+		retry  int
 	)
 
 	apiUrl = gateConn.schema + "/push/all"
@@ -70,9 +70,9 @@ func (gateConn *GateConn) PushAll(itemsJson []byte) (err error) {
 func (gateConn *GateConn) PushRoom(room string, itemsJson []byte) (err error) {
 	var (
 		apiUrl string
-		form url.Values
-		resp *http.Response
-		retry int
+		form   url.Values
+		resp   *http.Response
+		retry  int
 	)
 
 	apiUrl = gateConn.schema + "/push/room"

@@ -1,20 +1,20 @@
-package main
+package logic
 
 import (
-	"fmt"
-	"os"
 	"flag"
+	"fmt"
+	"github.com/yankooo/video_server/logic"
+	"os"
 	"runtime"
 	"time"
-	"github.com/owenliang/go-push/logic"
 )
 
 var (
-	confFile string		// 配置文件路径
+	confFile string // 配置文件路径
 )
 
 func initArgs() {
-	flag.StringVar(&confFile, "config", "./logic.json", "where logic.json is.")
+	flag.StringVar(&confFile, "conf", "./logic.json", "where logic.json is.")
 	flag.Parse()
 }
 
@@ -22,7 +22,7 @@ func initEnv() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 }
 
-func main()  {
+func main() {
 	var (
 		err error
 	)
